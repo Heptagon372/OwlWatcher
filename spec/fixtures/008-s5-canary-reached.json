@@ -1,0 +1,67 @@
+{
+  "name": "008-s5-canary-reached",
+  "why": "시험망 비콘에는 못 닿는데 차단돼야 할 canary에는 닿았다 = 핫스팟으로 시험망을 우회. 설계서 07장: crit는 canary 성공에만, beacon 실패는 info.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "observations": [
+        {
+          "kind": "netPosture",
+          "source": "userspace",
+          "signal": "S5",
+          "collector": "beacon-canary",
+          "platform": "windows",
+          "ts": "2026-10-14T01:12:00Z",
+          "beacon": false,
+          "canary": true,
+          "ifaceCount": 2,
+          "ifaces": [
+            {
+              "name": "Wi-Fi",
+              "type": "wifi",
+              "up": true
+            },
+            {
+              "name": "Mobile",
+              "type": "rndis",
+              "up": true
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S5-CANARY-REACHED",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "net:canary",
+        "contexts": [
+          "multipleInterfaces"
+        ]
+      },
+      {
+        "rule": "R-S5-BEACON-MISS",
+        "grade": "P2",
+        "severity": "info",
+        "subjectKey": "net:beacon",
+        "contexts": []
+      }
+    ],
+    "chainHead": "381ca2c0676a569ecdcb7035a907518abb4d56ee04514789f47b247f465ff5d1"
+  }
+}

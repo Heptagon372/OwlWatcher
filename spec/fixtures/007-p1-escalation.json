@@ -1,0 +1,173 @@
+{
+  "name": "007-p1-escalation",
+  "why": "같은 프로세스에 S1·S2·S3가 겹친다. 설계서 02장: P1은 하나면 warn, 같은 대상에 2개 이상이면 crit.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "scanned": [
+        "process",
+        "statusItem",
+        "captureExcludedWindow"
+      ],
+      "observations": [
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:00Z",
+          "pid": 900,
+          "path": "C:/Windows/explorer.exe",
+          "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+          "signer": "Microsoft Windows",
+          "signed": true,
+          "platformBinary": true,
+          "hasVisibleWindow": true,
+          "startedAt": "2026-10-14T00:10:00Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:00Z",
+          "pid": 901,
+          "path": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:05Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:00Z",
+          "pid": 902,
+          "path": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:07Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:00Z",
+          "pid": 903,
+          "path": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:11:00Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:00Z",
+          "pid": 6100,
+          "path": "~/Downloads/assist.exe",
+          "sha256": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+          "signer": null,
+          "signed": false,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:55:00Z"
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:01Z",
+          "ownerPid": 6100,
+          "ownerPath": "~/Downloads/assist.exe",
+          "sha256": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+          "signer": null,
+          "signed": false,
+          "promoted": true
+        },
+        {
+          "kind": "captureExcludedWindow",
+          "source": "userspace",
+          "signal": "S3",
+          "collector": "enumwindows",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:02Z",
+          "ownerPid": 6100,
+          "ownerPath": "~/Downloads/assist.exe",
+          "sha256": "d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+          "signer": null,
+          "signed": false,
+          "affinity": "excludeFromCapture"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S1-UNKNOWN-AGENT-PROC",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+        "contexts": [
+          "downloadsPath",
+          "unsignedBinary",
+          "startedNearExamStart"
+        ]
+      },
+      {
+        "rule": "R-S2-UNKNOWN-STATUS-ITEM",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+        "contexts": [
+          "downloadsPath",
+          "unsignedBinary"
+        ]
+      },
+      {
+        "rule": "R-S3-CAPTURE-EXCLUDED-WINDOW",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+        "contexts": []
+      },
+      {
+        "rule": "R-P1-ESCALATION",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1d1",
+        "contexts": []
+      }
+    ],
+    "chainHead": "021d4f0ee545aca84dfa2ff551039e12151af593fdaa32cdddcf94564cfecefa"
+  }
+}

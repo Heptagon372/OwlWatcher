@@ -1,0 +1,146 @@
+:root {
+  --paper: #FAFAF7;
+  --paper-2: #F1F2EE;
+  --ink: #1B1E23;
+  --ink-2: #3E454E;
+  --muted: #69717C;
+  --line: #D7DBE0;
+  --accent: #1F4E7A;
+  --accent-soft: #E3ECF5;
+  --ok: #2B7A4B;
+  --ok-soft: #E2F1E7;
+  --warn: #A46A0C;
+  --warn-soft: #F8EDD7;
+  --crit: #B3261E;
+  --crit-soft: #F9E1DF;
+  --mono: "IBM Plex Mono", Consolas, ui-monospace, monospace;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #14171C;
+    --paper-2: #1B1F26;
+    --ink: #E6E8EA;
+    --ink-2: #C2C7CE;
+    --muted: #8E97A3;
+    --line: #2C323B;
+    --accent: #86B4E0;
+    --accent-soft: #1D2B3B;
+    --ok: #6CC08B;
+    --ok-soft: #1B2F23;
+    --warn: #E0B053;
+    --warn-soft: #332913;
+    --crit: #F08A83;
+    --crit-soft: #3A1E1C;
+  }
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 15px/1.65 "IBM Plex Sans KR", "Malgun Gothic", system-ui, sans-serif;
+  word-break: keep-all;
+}
+
+a { color: var(--accent); }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding: 28px 20px 64px; }
+
+h1 { font-size: 24px; margin: 0 0 4px; letter-spacing: -0.01em; }
+h2 { font-size: 16px; margin: 30px 0 10px; color: var(--ink-2); }
+.sub { color: var(--muted); font-size: 13.5px; margin: 0 0 22px; }
+
+.notice {
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  border-radius: 4px;
+  padding: 12px 15px;
+  font-size: 13.5px;
+  color: var(--ink-2);
+  margin: 0 0 22px;
+}
+.notice.warn { border-color: color-mix(in srgb, var(--warn) 45%, var(--line)); background: var(--warn-soft); }
+
+/* ── 좌석 맵 */
+
+.seats {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+}
+
+.seat {
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 12px 14px;
+  background: var(--paper-2);
+}
+.seat.armed { border-color: var(--ok); background: var(--ok-soft); }
+.seat.ready { border-color: var(--accent); background: var(--accent-soft); }
+.seat.warn { border-color: var(--warn); background: var(--warn-soft); }
+.seat.crit { border-color: var(--crit); background: var(--crit-soft); }
+.seat.offline { opacity: 0.55; }
+
+.seat .no { font: 600 20px/1.2 var(--mono); }
+.seat .st { font-size: 13px; font-weight: 600; margin-top: 2px; }
+.seat .meta { font: 11.5px/1.5 var(--mono); color: var(--muted); margin-top: 7px; }
+.seat .flag { color: var(--warn); }
+
+button {
+  font: inherit;
+  font-size: 12.5px;
+  padding: 4px 11px;
+  margin-top: 9px;
+  cursor: pointer;
+  border: 1px solid var(--accent);
+  background: transparent;
+  color: var(--accent);
+  border-radius: 3px;
+}
+button:hover { background: var(--accent-soft); }
+
+/* ── 알림 피드 */
+
+.feed { border: 1px solid var(--line); border-radius: 5px; overflow: hidden; }
+.ev { padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 13.5px; }
+.ev:last-child { border-bottom: 0; }
+.ev .badge {
+  display: inline-block;
+  font: 600 11px/1.6 var(--mono);
+  padding: 1px 7px;
+  border-radius: 3px;
+  margin-right: 8px;
+  vertical-align: 1px;
+}
+.ev.crit .badge { background: var(--crit-soft); color: var(--crit); }
+.ev.warn .badge { background: var(--warn-soft); color: var(--warn); }
+.ev.info .badge { background: var(--paper-2); color: var(--muted); border: 1px solid var(--line); }
+.ev .rule { font: 11.5px/1.5 var(--mono); color: var(--muted); margin-top: 3px; }
+.ev .note { font-size: 12.5px; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+.empty { padding: 18px 15px; color: var(--muted); font-size: 13.5px; }
+
+/* ── 리포트 — P0/P1/P2 를 절대 섞지 않는다 */
+
+.section { border: 1px solid var(--line); border-radius: 5px; margin: 0 0 22px; overflow: hidden; }
+.section > header { padding: 11px 15px; background: var(--paper-2); border-bottom: 1px solid var(--line); }
+.section h3 { margin: 0; font-size: 15px; }
+.section .why { font-size: 12.5px; color: var(--muted); margin-top: 3px; }
+.section.p0 > header { background: var(--crit-soft); }
+.section.p1 > header { background: var(--warn-soft); }
+
+table { border-collapse: collapse; width: 100%; font-size: 13.5px; }
+th, td { padding: 8px 12px; text-align: left; border-bottom: 1px solid var(--line); vertical-align: top; }
+th { font-size: 12px; color: var(--muted); font-weight: 600; }
+tr:last-child td { border-bottom: 0; }
+
+footer.page {
+  margin-top: 36px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  color: var(--muted);
+  font-size: 12.5px;
+}

@@ -1,0 +1,61 @@
+{
+  "name": "011-s14-attestation",
+  "why": "하드웨어 키 폴백은 알림이 아니라 표기다(설계서 S14: 속이지 않는다). 반대로 서명 검증 실패는 P0 — 다른 기기의 하트비트일 수 있다.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "observations": [
+        {
+          "kind": "attestation",
+          "source": "selfverify",
+          "signal": "S14",
+          "collector": "tpm-cng",
+          "platform": "windows",
+          "ts": "2026-10-14T01:00:05Z",
+          "attestationKind": "sw",
+          "provider": "software-fallback",
+          "verified": true
+        }
+      ]
+    },
+    {
+      "observations": [
+        {
+          "kind": "attestation",
+          "source": "selfverify",
+          "signal": "S14",
+          "collector": "tpm-cng",
+          "platform": "windows",
+          "ts": "2026-10-14T01:30:00Z",
+          "attestationKind": "hw",
+          "provider": "Microsoft Platform Crypto Provider",
+          "verified": false
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S14-ATTESTATION-FAIL",
+        "grade": "P0",
+        "severity": "crit",
+        "subjectKey": "session:exam-2026-mid-cs101",
+        "contexts": []
+      }
+    ],
+    "chainHead": "2e61daabef1fd9b853ca573e67e46b06f98214cc75dba155c8b1956226456a9f"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owlwatch.spec/event.schema.json",
+  "title": "Event",
+  "description": "규칙 엔진의 출력. append-only 해시체인의 한 항목이며 기기 하드웨어 키로 서명된다. 설계서 08장 events 테이블과 1:1 대응.",
+  "type": "object",
+  "required": ["sessionId", "seq", "ts", "grade", "severity", "rule", "signals", "summary", "subject", "evidence", "prevHash", "hash"],
+  "properties": {
+    "sessionId": { "type": "string" },
+    "seq": { "type": "integer", "minimum": 1, "description": "세션 내 단조 증가" },
+    "ts": { "type": "string", "format": "date-time" },
+    "grade": { "enum": ["P0", "P1", "P2"] },
+    "severity": {
+      "enum": ["info", "warn", "crit"],
+      "description": "등급(증거의 성질)과 심각도(운영 긴급도)는 직교한다. 설계서 02장의 단독 처리 열이 기본 매핑이고 규칙별 예외가 있다 — 예: S5 canary 성공은 P1이지만 crit."
+    },
+    "rule": { "type": "string", "pattern": "^R-[A-Z0-9-]+$" },
+    "signals": { "type": "array", "items": { "type": "string", "pattern": "^S([1-9]|1[0-5])$" }, "minItems": 1 },
+    "summary": { "type": "string", "description": "등급을 먼저 말한다. 아이콘 모양 추정·부정행위 단정 금지. 설계서 05장 알림 문구 규칙." },
+    "subject": {
+      "type": "object",
+      "required": ["kind", "key"],
+      "description": "디바운스·에스컬레이션의 단위. 프로세스라면 이름이 아니라 해시/서명자가 키다.",
+      "properties": {
+        "kind": { "enum": ["process", "window", "device", "network", "session", "guard"] },
+        "key": { "type": "string" },
+        "label": { "type": "string" },
+        "pid": { "type": ["integer", "null"] }
+      }
+    },
+    "evidence": {
+      "type": "object",
+      "required": ["observations"],
+      "properties": {
+        "observations": { "type": "array", "items": { "$ref": "https://owlwatch.spec/observation.schema.json" } },
+        "notes": { "type": "array", "items": { "type": "string" } },
+        "escalatedFrom": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "contexts": { "type": "array", "items": { "type": "string" }, "description": "P2 맥락. 알림을 만들지 않고 이벤트 본문에만 붙는다." },
+    "prevHash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "sig": { "type": ["string", "null"], "description": "base64. Secure Enclave / TPM 키 서명" }
+  },
+  "additionalProperties": false
+}

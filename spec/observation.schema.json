@@ -1,0 +1,104 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owlwatch.spec/observation.schema.json",
+  "title": "Observation",
+  "description": "수집기가 내보내는 단일 관측. 규칙 엔진의 유일한 입력이다. source가 등급의 상한을 정한다(spec/signals.json sourceRank).",
+  "type": "object",
+  "required": ["kind", "ts", "source", "platform", "signal"],
+  "properties": {
+    "kind": {
+      "enum": ["exec", "process", "statusItem", "captureExcludedWindow", "capsTransition",
+               "netPosture", "procConnection", "vmIndicator", "remoteControlProcess",
+               "iokitOpen", "tccGrant", "imageLoad", "lockdownState", "captureGuard",
+               "agentIntegrity", "attestation"]
+    },
+    "ts": { "type": "string", "format": "date-time" },
+    "source": {
+      "enum": ["kernel", "server", "selfverify", "userspace"],
+      "description": "kernel=ESF/ETW, server=게이트웨이/LMS, selfverify=우리 코드의 검증 결과, userspace=폴링·열거"
+    },
+    "platform": { "enum": ["macos", "windows"] },
+    "signal": { "type": "string", "pattern": "^S([1-9]|1[0-5])$" },
+    "collector": { "type": "string", "description": "구현체 식별자. 폴백 경로 추적용 (예: etw-kernel-process, wmi-poll)" },
+
+    "pid": { "type": "integer", "minimum": 0 },
+    "ppid": { "type": "integer", "minimum": 0 },
+    "path": { "type": "string", "description": "홈 디렉터리는 ~ 로 치환해 저장한다" },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "cdhash": { "type": "string" },
+    "signer": { "type": ["string", "null"], "description": "Authenticode 인증서 주체 CN / macOS 서명 주체" },
+    "teamId": { "type": ["string", "null"] },
+    "signingId": { "type": ["string", "null"] },
+    "signed": { "type": "boolean" },
+    "notarized": { "type": ["boolean", "null"] },
+    "platformBinary": { "type": "boolean" },
+    "startedAt": { "type": "string", "format": "date-time" },
+    "hasVisibleWindow": { "type": "boolean" },
+    "agentLike": {
+      "type": "boolean",
+      "description": "S1 의 실제 판정 대상인가. '에이전트형'의 정의는 플랫폼마다 달라서(macOS 는 activationPolicy, Windows 는 최상위 창 존재 여부) 수집기가 답한다. 없으면 규칙 엔진이 hasVisibleWindow===false 로 폴백한다."
+    },
+
+    "ownerPid": { "type": ["integer", "null"] },
+    "ownerPath": { "type": "string" },
+    "promoted": { "type": ["boolean", "null"] },
+    "method": { "enum": ["registry", "tray", "ax", "cgwindow"] },
+
+    "affinity": { "enum": ["none", "monitor", "excludeFromCapture"] },
+    "state": { "type": "boolean", "description": "capsTransition: 전이 후 상태" },
+
+    "beacon": { "type": "boolean" },
+    "canary": { "type": "boolean", "description": "true = canary에 도달했다 = 시험망 밖(핫스팟). 설계서 07장" },
+    "ifaceCount": { "type": "integer", "minimum": 0 },
+    "ifaces": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["name", "type", "up"],
+        "properties": {
+          "name": { "type": "string" },
+          "type": { "type": "string", "description": "ethernet|wifi|rndis|bluetoothPan|loopback|other" },
+          "up": { "type": "boolean" }
+        }
+      }
+    },
+    "remoteHost": { "type": "string" },
+    "remotePort": { "type": "integer" },
+
+    "hypervisorPresent": { "type": "boolean", "description": "CPUID 하이퍼바이저 비트 그대로의 사실. Windows 11 은 VBS/Hyper-V 때문에 실기기에서도 켜져 있다." },
+    "vmGuestLikely": {
+      "type": "boolean",
+      "description": "가상머신 안에서 돌고 있는가. 하이퍼바이저 비트만으로는 호스트의 VBS 와 게스트를 구분하지 못하므로 SMBIOS 를 함께 본 수집기의 판정이다. 없으면 규칙 엔진이 hypervisorPresent 로 폴백한다."
+    },
+    "vendor": { "type": ["string", "null"], "description": "CPUID 0x40000000 하이퍼바이저 벤더 문자열" },
+    "manufacturer": { "type": ["string", "null"] },
+    "model": { "type": ["string", "null"] },
+    "matched": { "type": "string", "description": "deny 프리셋 id" },
+
+    "userClientClass": { "type": "string" },
+    "service": { "type": "string" },
+    "identity": { "type": "string" },
+    "right": { "enum": ["allowed", "denied"] },
+    "reason": { "type": "string" },
+    "modulePath": { "type": "string" },
+
+    "mode": { "enum": ["aac", "takeatest", "none"] },
+    "active": { "type": "boolean" },
+
+    "windowAffinityOk": { "type": "boolean" },
+    "selfCaptureBlank": { "type": "boolean" },
+    "ok": { "type": "boolean" },
+
+    "selfSignatureValid": { "type": "boolean" },
+    "debuggerPresent": { "type": "boolean" },
+    "clockSkewMs": { "type": "integer" },
+
+    "attestationKind": { "enum": ["hw", "sw"] },
+    "provider": { "type": "string" },
+    "verified": { "type": "boolean" },
+
+    "degraded": { "type": "boolean", "description": "수집이 부분 실패했다. 등급 산정 시 P0으로 올리지 않는다." },
+    "note": { "type": "string" }
+  },
+  "additionalProperties": false
+}

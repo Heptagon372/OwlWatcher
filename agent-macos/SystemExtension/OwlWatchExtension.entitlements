@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  OwlWatch macOS 시스템 확장 엔타이틀먼트.
+
+  이 두 개가 설계서 M0 의 크리티컬 패스다. Apple 에 신청해 승인받아야 하고,
+  승인 없이 서명하면 확장이 로드되지 않는다.
+
+    endpoint-security.client                    S9·S10·S11·S12 — macOS 가 P0 를 만드는 유일한 경로
+    automatic-assessment-configuration          L2 락다운(AAC)
+
+  없는 것도 목록이다. 카메라·마이크·화면 기록·연락처·위치 엔타이틀먼트가 여기 없고,
+  그건 설계서 10장 비수집 약속을 코드가 아니라 서명으로 증명한다 —
+  이 파일은 앱 번들에 남아 누구나 확인할 수 있다.
+-->
+<plist version="1.0">
+<dict>
+    <key>com.apple.developer.endpoint-security.client</key>
+    <true/>
+
+    <key>com.apple.developer.automatic-assessment-configuration</key>
+    <true/>
+
+    <key>com.apple.developer.system-extension.install</key>
+    <true/>
+
+    <key>com.apple.security.app-sandbox</key>
+    <false/>
+</dict>
+</plist>

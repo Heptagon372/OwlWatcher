@@ -1,0 +1,56 @@
+{
+  "name": "014-source-downgrade",
+  "why": "ETW 서비스를 못 깔아 WMI 폴링으로 폴백한 좌석. 같은 실행 사실이지만 출처가 사용자 공간이므로 등급이 P0에서 P1로 자동으로 내려간다 — 설계서 02장 \"P0에는 휴리스틱을 넣지 않는다\".",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "observations": [
+        {
+          "kind": "exec",
+          "source": "userspace",
+          "signal": "S9",
+          "collector": "wmi-poll",
+          "platform": "windows",
+          "ts": "2026-10-14T01:03:00Z",
+          "pid": 4211,
+          "ppid": 900,
+          "path": "~/Downloads/helper.exe",
+          "sha256": "bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd",
+          "signer": null,
+          "signed": false,
+          "platformBinary": false,
+          "startedAt": "2026-10-14T01:03:00Z",
+          "degraded": true
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S9-UNKNOWN-EXEC",
+        "grade": "P1",
+        "severity": "warn",
+        "subjectKey": "proc:sha256:bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd",
+        "contexts": [
+          "downloadsPath",
+          "unsignedBinary",
+          "startedDuringExam"
+        ]
+      }
+    ],
+    "chainHead": "27d4d4cdfc704beae80231be55cf1da3431a8d6e368a9c04edfa5e112383c154"
+  }
+}

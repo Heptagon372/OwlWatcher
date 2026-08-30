@@ -1,0 +1,11 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>OwlWatch.Collectors</RootNamespace>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Description>Windows 신호 수집기 S1-S6 · S8 · S9(폴백) · S13 · S14. 관측만 만들고 등급은 주장하지 않는다.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../OwlWatch.Core/OwlWatch.Core.csproj" />
+  </ItemGroup>
+</Project>

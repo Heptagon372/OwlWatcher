@@ -1,0 +1,16 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Version>0.2.0</Version>
+    <Company>S.OWL</Company>
+    <Product>OwlWatch</Product>
+
+    <!-- NuGet 의존성을 두지 않는다. 시험장 PC에 오프라인으로 배포하고, 공급망을 줄이고,
+         "무엇을 안 하는지"를 코드로 증명하기 쉬워진다 (설계서 10장 소스 공개). -->
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,10 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>OwlWatch.Rules</RootNamespace>
+    <Description>탐지 규칙·등급 판정. core-rules 레퍼런스 구현의 포트. 플랫폼 중립.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../OwlWatch.Core/OwlWatch.Core.csproj" />
+  </ItemGroup>
+</Project>

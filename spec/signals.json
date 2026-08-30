@@ -1,0 +1,289 @@
+{
+  "$comment": "OwlWatch 신호 카탈로그 S1-S15. 설계서 v0.2 05장. 이 파일이 등급의 단일 출처다.",
+  "specVersion": "0.2.0",
+  "grades": {
+    "P0": {
+      "label": "결정적",
+      "definition": "OS 커널·보안 프레임워크 또는 학교가 소유한 서버가 기록한 사실, 혹은 우리 코드의 검증 실패. 학생 기기의 사용자 공간 코드가 위조할 수 없다.",
+      "allowedSources": [
+        "kernel",
+        "server",
+        "selfverify"
+      ],
+      "soloSeverity": "crit",
+      "reportSection": "확인된 사실"
+    },
+    "P1": {
+      "label": "강한 정황",
+      "definition": "정상 사용에서는 잘 나오지 않는 조합. 개별로는 설명 가능하지만 겹치면 우연이 어렵다.",
+      "allowedSources": [
+        "kernel",
+        "server",
+        "selfverify",
+        "userspace"
+      ],
+      "soloSeverity": "warn",
+      "escalation": {
+        "sameSubjectDistinctRules": 2,
+        "toSeverity": "crit"
+      },
+      "reportSection": "정황"
+    },
+    "P2": {
+      "label": "약한 정황",
+      "definition": "단독으로는 아무 의미 없음. P0·P1이 있을 때 서술을 보강하는 맥락.",
+      "allowedSources": [
+        "kernel",
+        "server",
+        "selfverify",
+        "userspace"
+      ],
+      "soloSeverity": "none",
+      "emitsAlert": false,
+      "reportSection": "참고"
+    }
+  },
+  "sourceRank": {
+    "$comment": "관측의 출처가 등급의 상한을 정한다. 커널 원장이 불가한 환경(WMI 폴백 등)에서는 source가 userspace로 내려가고 등급도 자동으로 P1이 된다 — 속이지 않는다.",
+    "kernel": "P0",
+    "server": "P0",
+    "selfverify": "P0",
+    "userspace": "P1"
+  },
+  "signals": [
+    {
+      "id": "S9",
+      "grade": "P0",
+      "name": "프로세스 원장",
+      "what": "시험 구간에 실행된 모든 프로세스의 경로·서명·부모·시작 시각",
+      "macos": "ES NOTIFY_EXEC/FORK/EXIT (cdhash, signing id, Team ID, is_platform_binary)",
+      "windows": "ETW Microsoft-Windows-Kernel-Process 실시간 세션 + WinVerifyTrust",
+      "windowsFallback": {
+        "method": "WMI __InstanceCreationEvent",
+        "source": "userspace",
+        "grade": "P1",
+        "why": "폴링 기반이라 단명 프로세스를 놓친다"
+      },
+      "privacy": "이름·경로·해시만 저장. 실행 인자(argv)는 저장하지 않는다.",
+      "status": {
+        "windows": "구현됨 — ETW 커널 원장. 권한 없으면 폴링 폴백(등급 P1로 강등)",
+        "macos": "구현됨(미컴파일) — ESF. Apple 승인 대기"
+      }
+    },
+    {
+      "id": "S10",
+      "grade": "P0",
+      "name": "캡처 권한 부여",
+      "what": "시험 직전·중에 어떤 앱이 화면 기록 권한을 받았는가",
+      "macos": "ES NOTIFY_TCC_MODIFY (macOS 15.4+), service=ScreenCapture",
+      "windows": null,
+      "windowsSubstitute": "S13",
+      "limits": "macOS 15.4 미만에는 이벤트가 없다. 엔타이틀먼트 보유 앱은 이벤트를 만들지 않는다.",
+      "status": {
+        "windows": "대응물 없음 — S13 으로 대체",
+        "macos": "구현됨(미컴파일) — ESF TCC_MODIFY. macOS 15.4+ 이고 Apple 승인 대기"
+      }
+    },
+    {
+      "id": "S12",
+      "grade": "P0",
+      "name": "HID 장치 접근",
+      "what": "키보드 LED를 직접 제어하려는 프로세스",
+      "macos": "ES NOTIFY_IOKIT_OPEN",
+      "windows": "LED 전용 제어는 커널 경로가 필요 → 실사용 도구는 실제 Caps Lock 상태를 토글하게 되므로 S4 폴링이 확정 관측 (실험, 14장 미결)",
+      "status": {
+        "windows": "대응 관측 없음. 실기기 확인 결과 LED 전용 제어는 불가 → S4 가 대신 잡는다",
+        "macos": "구현됨(미컴파일) — ESF IOKIT_OPEN. Apple 승인 대기"
+      }
+    },
+    {
+      "id": "S13",
+      "grade": "P0",
+      "name": "캡처 차단 자가검증",
+      "what": "보호가 지금도 실제로 작동 중인지. 실패 = 무력화됐거나 환경 미지원",
+      "macos": "AEAssessmentSession 상태 + delegate 중단 콜백",
+      "windows": "WDA_EXCLUDEFROMCAPTURE 적용 후 스스로 캡처해 결과가 비었는지 30초 주기 확인",
+      "why": "MS는 이 플래그를 보안 기능이라고 하지 않으며 우회 기법이 공개돼 있다. '설정했다'가 아니라 '지금도 유효하다'를 증명한다.",
+      "status": {
+        "windows": "구현·실기기 검증됨 — WDA_EXCLUDEFROMCAPTURE + 센티넬 자가검증",
+        "macos": "해당 없음 — 창 단위 캡처 차단이 존재하지 않는다. AAC 로 대체"
+      }
+    },
+    {
+      "id": "S7",
+      "grade": "P0",
+      "name": "락다운 이탈",
+      "what": "평가 모드에서 빠져나온 시각",
+      "macos": "AAC 세션 종료·중단 이벤트",
+      "windows": "Take a Test 프로세스·창 소멸",
+      "note": "정전·크래시와 구분하기 위해 S9 원장의 종료 사유와 대조",
+      "status": {
+        "windows": "구현됨 — Take a Test 프로세스 관측. 승인 불필요",
+        "macos": "구현됨(미컴파일) — AAC delegate. Apple 승인 대기"
+      }
+    },
+    {
+      "id": "S14",
+      "grade": "P0",
+      "name": "하드웨어 키 검증",
+      "what": "하트비트가 그 기기에서 나왔는가. 세션 키 복제·재생 공격 차단",
+      "macos": "Secure Enclave (kSecAttrTokenIDSecureEnclave)",
+      "windows": "TPM 2.0 — CNG Microsoft Platform Crypto Provider",
+      "fallback": {
+        "method": "software key",
+        "attestation": "sw",
+        "grade": "P1",
+        "why": "TPM 없는 구형 PC. UI에 그대로 표기하고 속이지 않는다."
+      },
+      "status": {
+        "windows": "구현·실기기 검증됨 — TPM CNG. 없으면 소프트웨어 키(등급 표기)",
+        "macos": "미구현 — Secure Enclave 경로가 필요하다"
+      }
+    },
+    {
+      "id": "S15",
+      "grade": "P0",
+      "name": "서버측 로그",
+      "what": "학생 기기와 무관하게 게이트웨이·LMS가 남긴 사실",
+      "server": "좌석 IP별 연결·DNS 질의(차단된 목적지 포함), LMS 문항 표시·응답 타임라인",
+      "why": "이 신호만이 '에이전트를 껐다'에도 살아남는다. 리포트의 뼈대.",
+      "status": {
+        "server": "콘솔 스키마(net_logs)와 목 서버에 자리만 있다. 게이트웨이 연동 미착수"
+      }
+    },
+    {
+      "id": "S1",
+      "grade": "P1",
+      "name": "허용목록 밖 에이전트형 프로세스",
+      "what": "Dock/작업표시줄에 없는 상주 프로세스, 미서명·비공증",
+      "macos": "NSWorkspace.runningApplications(.accessory/.prohibited) + SecStaticCodeCreateWithPath",
+      "windows": "CreateToolhelp32Snapshot + WinVerifyTrust + 인증서 주체 + GetProcessTimes",
+      "falsePositives": "Dropbox·Raycast·Karabiner·카카오톡 등 상주 앱 → 학교 공용 허용목록",
+      "status": {
+        "windows": "구현·실기기 검증됨 — 최상위 창 유무로 에이전트형 판정",
+        "macos": "구현됨(미컴파일) — activationPolicy"
+      }
+    },
+    {
+      "id": "S2",
+      "grade": "P1",
+      "name": "메뉴바/트레이 항목 소유자",
+      "what": "상태 항목의 소유 프로세스가 허용목록 밖",
+      "macos": "kAXExtrasMenuBarAttribute (접근성) / CGWindowListCopyWindowInfo 레이어 25",
+      "windows": "HKCU\\Control Panel\\NotifyIconSettings + Shell_TrayWnd/NotifyIconOverflowWindow 툴바 열거",
+      "status": {
+        "windows": "구현·실기기 검증됨 — NotifyIconSettings ∩ 실행 중 프로세스",
+        "macos": "구현됨(미컴파일) — CGWindowList 레이어 25"
+      }
+    },
+    {
+      "id": "S3",
+      "grade": "P1",
+      "name": "캡처 제외 창",
+      "what": "Cluely형 — 캡처에서 제외된 타 프로세스의 창",
+      "macos": "CGWindowListCopyWindowInfo kCGWindowSharingState == 0",
+      "windows": "EnumWindows → GetWindowDisplayAffinity != WDA_NONE",
+      "falsePositives": "비밀번호 관리자·DRM 플레이어 → 허용목록. 우리 시험 창은 제외.",
+      "status": {
+        "windows": "구현·실기기 검증됨 — GetWindowDisplayAffinity",
+        "macos": "구현됨(미컴파일) — kCGWindowSharingState"
+      }
+    },
+    {
+      "id": "S4",
+      "grade": "P1",
+      "name": "Caps Lock 비인간 패턴",
+      "what": "≤300ms 주기, 1.5초 내 2회 이상 토글",
+      "macos": "50Hz CGEventSource.flagsState(.hidSystemState)",
+      "windows": "50Hz GetKeyState(VK_CAPITAL). Windows에서는 사실상 LED 모드의 확정 관측(S12 참조)",
+      "falsePositives": "Karabiner 등 리매핑, 실제 타이핑 → 주기 규칙성으로 구분",
+      "status": {
+        "windows": "구현됨 — 50Hz GetKeyState",
+        "macos": "구현됨(미컴파일) — 50Hz CGEventSource"
+      }
+    },
+    {
+      "id": "S11",
+      "grade": "P1",
+      "name": "캡처 스택 로드",
+      "what": "화면 캡처 프레임워크를 메모리에 올린 프로세스",
+      "macos": "ES NOTIFY_MMAP — ScreenCaptureKit.framework",
+      "windows": "ETW 이미지 로드 — dxgi.dll·d3d11.dll·Windows.Graphics.Capture 조합. GDI BitBlt 경로는 신호 없음.",
+      "coverage": "Windows는 커버리지가 낮으므로 보조 신호로만",
+      "status": {
+        "windows": "구현됨 — ETW 이미지 로드. 커널 세션이 있어야 동작",
+        "macos": "구현됨(미컴파일) — ESF MMAP"
+      }
+    },
+    {
+      "id": "S5",
+      "grade": "P1",
+      "name": "네트워크 포스처",
+      "what": "시험망 여부, 다중 인터페이스, 프로세스별 원격 연결",
+      "macos": "beacon/canary; getifaddrs; proc_pidinfo(PROC_PIDLISTFDS)",
+      "windows": "beacon/canary; GetAdaptersAddresses(RNDIS·Bluetooth PAN); GetExtendedTcpTable(OWNER_PID)",
+      "severityRules": "beacon 실패는 info. crit는 canary 성공에만.",
+      "status": {
+        "windows": "구현·실기기 검증됨 — beacon/canary + GetExtendedTcpTable",
+        "macos": "미구현 — getifaddrs · proc_pidinfo 경로가 필요하다"
+      }
+    },
+    {
+      "id": "S6",
+      "grade": "P1",
+      "name": "VM·원격제어",
+      "what": "가상머신 안에서 시험, 또는 원격제어 도구 상주",
+      "macos": "sysctl kern.hv_vmm_present + 금지 프로세스 프리셋",
+      "windows": "CPUID 하이퍼바이저 비트, SMBIOS 제조사 + 같은 프리셋",
+      "falsePositives": "개발 수업의 정당한 VM → 시험 정책에 명시",
+      "status": {
+        "windows": "구현·실기기 검증됨 — CPUID + SMBIOS 로 게스트 판정",
+        "macos": "미구현 — sysctl kern.hv_vmm_present"
+      }
+    },
+    {
+      "id": "S8",
+      "grade": "P1",
+      "name": "에이전트 무결성",
+      "what": "자기 서명 검증, 디버거 부착, 시계 조작",
+      "macos": "SecCodeCheckValidity(self), P_TRACED, ES NOTIFY_TRACE",
+      "windows": "Authenticode self-check, CheckRemoteDebuggerPresent, 서버 시각 대조",
+      "status": {
+        "windows": "구현·실기기 검증됨 — Authenticode 자기검증 + 디버거",
+        "macos": "부분 구현(미컴파일) — ESF NOTIFY_TRACE"
+      }
+    }
+  ],
+  "p2Contexts": [
+    {
+      "id": "downloadsPath",
+      "label": "다운로드 경로 실행"
+    },
+    {
+      "id": "startedNearExamStart",
+      "label": "시험 직전 시작",
+      "window": "thresholds.preExamContextMs"
+    },
+    {
+      "id": "startedDuringExam",
+      "label": "시험 시간 중 시작"
+    },
+    {
+      "id": "multipleInterfaces",
+      "label": "네트워크 인터페이스 2개 이상"
+    },
+    {
+      "id": "unsignedBinary",
+      "label": "미서명 바이너리"
+    },
+    {
+      "id": "unnotarizedBinary",
+      "label": "미공증 바이너리"
+    },
+    {
+      "id": "softwareAttestation",
+      "label": "소프트웨어 키 폴백(하드웨어 키 없음)"
+    }
+  ],
+  "$statusNote": "status 는 플랫폼별 구현 상태다. '미컴파일'은 Swift 툴체인이 없는 기기에서 작성했다는 뜻이고, agent-macos 에서 swift run owlwatch-specrunner 가 통과하기 전에는 동작한다고 말할 수 없다. '실기기 검증됨'은 Windows 11 build 26200 한 대에서 실제로 돌려 확인했다는 뜻이며, 설계서 12장의 플랫폼 매트릭스를 돌리기 전까지 일반화할 수 없다."
+}

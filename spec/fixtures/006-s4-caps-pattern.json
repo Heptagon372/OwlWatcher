@@ -1,0 +1,71 @@
+{
+  "name": "006-s4-caps-pattern",
+  "why": "Caps Lock이 250ms 주기로 4회 전환. 사람의 타이핑으로 보기 어려운 규칙성 → S4. Windows에서는 LED 모드의 사실상 확정 관측이다(S12 참조).",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "observations": [
+        {
+          "kind": "capsTransition",
+          "source": "userspace",
+          "signal": "S4",
+          "collector": "getkeystate-50hz",
+          "ts": "2026-10-14T01:20:00.000Z",
+          "state": true,
+          "platform": "windows"
+        },
+        {
+          "kind": "capsTransition",
+          "source": "userspace",
+          "signal": "S4",
+          "collector": "getkeystate-50hz",
+          "ts": "2026-10-14T01:20:00.250Z",
+          "state": true,
+          "platform": "windows"
+        },
+        {
+          "kind": "capsTransition",
+          "source": "userspace",
+          "signal": "S4",
+          "collector": "getkeystate-50hz",
+          "ts": "2026-10-14T01:20:00.500Z",
+          "state": true,
+          "platform": "windows"
+        },
+        {
+          "kind": "capsTransition",
+          "source": "userspace",
+          "signal": "S4",
+          "collector": "getkeystate-50hz",
+          "ts": "2026-10-14T01:20:00.750Z",
+          "state": true,
+          "platform": "windows"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S4-CAPS-PATTERN",
+        "grade": "P1",
+        "severity": "warn",
+        "subjectKey": "device:capslock",
+        "contexts": []
+      }
+    ],
+    "chainHead": "25057f9a6ad4628bdb2c1bb0cfdc38bcf63bf1ee0ddd599396f4abbf162342fe"
+  }
+}

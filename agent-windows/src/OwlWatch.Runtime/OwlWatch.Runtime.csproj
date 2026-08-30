@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>OwlWatch.Runtime</RootNamespace>
+    <UseWindowsForms>true</UseWindowsForms>
+    <Description>세션 오케스트레이션 — 점검, 이벤트 저장소, 하트비트, 60초 코드.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../OwlWatch.Core/OwlWatch.Core.csproj" />
+    <ProjectReference Include="../OwlWatch.Rules/OwlWatch.Rules.csproj" />
+    <ProjectReference Include="../OwlWatch.Collectors/OwlWatch.Collectors.csproj" />
+  </ItemGroup>
+</Project>

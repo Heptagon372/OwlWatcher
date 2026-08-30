@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>OwlWatch.Agent</RootNamespace>
+    <AssemblyName>owlwatch-agent</AssemblyName>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <Description>L1 에이전트 — 시험 창 캡처 차단 + 30초 자가검증. 관리자 권한 불필요.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../OwlWatch.Runtime/OwlWatch.Runtime.csproj" />
+  </ItemGroup>
+</Project>

@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owlwatch.spec/policy.schema.json",
+  "title": "Policy",
+  "description": "허용목록·거부목록·임계값. 설계서 05장 '허용목록 계층': OS 기본 → 학교 공용 → 강의별 → 세션 임시. 키는 이름이 아니라 Team ID / 인증서 주체 / cdhash / sha256.",
+  "type": "object",
+  "required": ["id", "scope", "version", "allow", "deny", "thresholds"],
+  "properties": {
+    "id": { "type": "string" },
+    "scope": { "enum": ["os", "school", "course", "session"] },
+    "version": { "type": "integer", "minimum": 1 },
+    "note": { "type": "string" },
+    "comments": {
+      "type": "array",
+      "description": "정책 파일에 남기는 결정 기록. 왜 넣었는지보다 왜 안 넣었는지가 더 중요할 때가 많다.",
+      "items": { "type": "string" }
+    },
+    "allow": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "description": "하나 이상의 키가 있어야 한다. 여러 키가 있으면 전부 일치해야 한다(AND).",
+        "properties": {
+          "teamId": { "type": "string" },
+          "signer": { "type": "string", "description": "인증서 주체. 정확 일치 또는 * 접미 와일드카드" },
+          "cdhash": { "type": "string" },
+          "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "path": { "type": "string", "description": "최후 수단. 이름 기반이라 위장에 약하므로 platformBinary 등 다른 키와 함께 쓴다." },
+          "platform": { "enum": ["macos", "windows", "any"] },
+          "layer": { "enum": ["os", "school", "course", "session"] },
+          "note": { "type": "string" },
+          "expiresAt": { "type": "string", "format": "date-time", "description": "session 계층 임시 허용은 그 시험 동안만" }
+        },
+        "anyOf": [
+          { "required": ["teamId"] }, { "required": ["signer"] },
+          { "required": ["cdhash"] }, { "required": ["sha256"] }, { "required": ["path"] }
+        ],
+        "additionalProperties": false
+      }
+    },
+    "deny": {
+      "type": "array",
+      "description": "금지 프로세스 프리셋(원격제어 등). 허용목록보다 우선한다.",
+      "items": {
+        "type": "object",
+        "required": ["id", "match"],
+        "properties": {
+          "id": { "type": "string" },
+          "note": { "type": "string" },
+          "signal": { "type": "string", "pattern": "^S([1-9]|1[0-5])$" },
+          "match": {
+            "type": "object",
+            "properties": {
+              "nameContains": { "type": "string", "description": "소문자 비교" },
+              "signer": { "type": "string" },
+              "sha256": { "type": "string" }
+            },
+            "additionalProperties": false
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "thresholds": {
+      "type": "object",
+      "required": ["capsMaxIntervalMs", "capsMinTogglesInWindow", "capsWindowMs", "debounceMs", "p1EscalationCount"],
+      "properties": {
+        "capsMaxIntervalMs": { "type": "integer", "default": 300, "description": "설계서 S4: ≤300ms 주기" },
+        "capsMinTogglesInWindow": { "type": "integer", "default": 2, "description": "설계서 S4: 1.5초 내 2회 이상" },
+        "capsWindowMs": { "type": "integer", "default": 1500 },
+        "debounceMs": { "type": "integer", "default": 300000, "description": "같은 규칙·같은 대상은 5분에 한 번" },
+        "p1EscalationCount": { "type": "integer", "default": 2, "description": "같은 대상에 서로 다른 P1 규칙 2개 이상이면 crit" },
+        "heartbeatOfflineMs": { "type": "integer", "default": 30000 },
+        "clockSkewToleranceMs": { "type": "integer", "default": 30000 },
+        "captureGuardIntervalMs": { "type": "integer", "default": 30000 },
+        "preExamContextMs": { "type": "integer", "default": 900000, "description": "'시험 직전 시작' P2 맥락으로 볼 범위" }
+      },
+      "additionalProperties": false
+    },
+    "captureStackModules": {
+      "type": "array",
+      "description": "S11. 이 목록의 모듈이 함께 로드되면 캡처 스택으로 본다.",
+      "items": { "type": "string" }
+    },
+    "policyNotes": {
+      "type": "object",
+      "description": "시험 정책에 명시해야 하는 항목. UI에 그대로 노출한다.",
+      "properties": {
+        "vmAllowed": { "type": "boolean", "default": false },
+        "text": { "type": "string" }
+      }
+    }
+  },
+  "additionalProperties": false
+}

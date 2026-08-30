@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <RootNamespace>OwlWatchSim</RootNamespace>
+    <AssemblyName>owlwatch-sim</AssemblyName>
+    <LangVersion>12.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <InvariantGlobalization>true</InvariantGlobalization>
+    <Version>0.2.0</Version>
+    <Product>owlwatch-sim</Product>
+    <Description>OwlWatch 탐지기 회귀 테스트용 시뮬레이터. 정답 기능 없음.</Description>
+  </PropertyGroup>
+</Project>

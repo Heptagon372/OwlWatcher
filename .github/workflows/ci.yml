@@ -1,0 +1,134 @@
+name: CI
+
+# 검증되지 않은 것은 되지 않은 것으로 센다. 그래서 CI 가 저장소의 주장을 매번 다시 확인한다.
+#
+# windows 잡에는 이 저장소가 개발 기기에서 못 한 검증이 하나 들어 있다 —
+# GitHub Actions 의 Windows 러너는 관리자 권한으로 돌기 때문에 ETW 실시간 세션을
+# 실제로 열 수 있다. 개발 기기에서는 ERROR_ACCESS_DENIED 로 끝났던 부분이다.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  spec-and-rules:
+    name: 스펙 · 레퍼런스 규칙 엔진
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 스펙 검증 (정책·픽스처가 스키마를 지키는가)
+        run: node spec/validate.mjs
+
+      - name: 레퍼런스 규칙 엔진 테스트
+        working-directory: core-rules
+        run: node --test test/*.test.js
+
+      - name: 픽스처 기대값이 최신인가
+        working-directory: core-rules
+        run: node bin/run-fixtures.js
+
+  windows-agent:
+    name: Windows 에이전트 · 패리티 · 커널 원장
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      - name: 빌드 (경고 0)
+        run: dotnet build OwlWatch.sln -warnaserror
+
+      - name: 패리티 — C# 포트가 레퍼런스와 같은 체인 해시를 내는가
+        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build
+
+      # 개발 기기에서는 권한이 없어 여기까지 못 갔다. 러너는 관리자라 실제 세션이 열린다.
+      - name: 커널 원장 (ETW) — 레이아웃 · TDH · 실시간 세션
+        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build -- --etw
+
+      - name: 원장 전 구간 — 등급이 출처를 따라가는가
+        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build -- --ledger
+
+      # 캡처 차단은 세션 0(헤드리스)에서 합성기가 없어 검증이 성립하지 않는다.
+      # unsupported 를 내는 것이 정상이고, 그 판단 자체가 코드에 있다.
+      - name: 캡처 차단 자가검증 (헤드리스에서는 unsupported 가 정상)
+        continue-on-error: true
+        run: dotnet run --project agent-windows/src/OwlWatch.ExamCheck --no-build -- --capture-test
+
+  heartbeat:
+    name: 하트비트 서명 상호운용
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 빌드
+        run: dotnet build agent-windows/tests/OwlWatch.SpecRunner/OwlWatch.SpecRunner.csproj
+
+      - name: 목 서버 기동
+        run: Start-Process node -ArgumentList 'mock-server/server.mjs' -WindowStyle Hidden
+        shell: pwsh
+
+      - name: 서버 대기
+        run: |
+          for ($i = 0; $i -lt 20; $i++) {
+            try { Invoke-WebRequest http://127.0.0.1:8787/b -UseBasicParsing | Out-Null; exit 0 }
+            catch { Start-Sleep -Milliseconds 500 }
+          }
+          Write-Error '목 서버가 뜨지 않았다'
+        shell: pwsh
+
+      # .NET 의 P1363 서명과 Node 의 ieee-p1363 검증이 맞물리는지.
+      # 어긋나면 좌석마다 S14(P0) 오탐이 뜬다.
+      - name: 서명 · 변조 거부 · 재생 거부
+        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build -- --heartbeat
+
+  macos-rules:
+    name: macOS 규칙 엔진 패리티
+    runs-on: macos-14
+    # 이 잡은 처음에 실패할 것으로 예상한다. Swift 포트는 툴체인 없는 기기에서 작성돼
+    # 한 번도 컴파일되지 않았고, 이 잡의 존재 이유가 바로 그 오류를 드러내는 것이다.
+    # 통과하기 시작하면 continue-on-error 를 지운다 — 그때부터는 회귀를 막는 잡이 된다.
+    continue-on-error: true
+    steps:
+      - uses: actions/checkout@v4
+
+      # 수집기(ESF·AAC)는 엔타이틀먼트와 Xcode 프로젝트가 필요해 여기서 빌드하지 않는다.
+      # 규칙 엔진과 정규화 JSON 은 순수 Swift 라 승인 없이도 검증된다.
+      - name: 빌드 (Core · Rules)
+        working-directory: agent-macos
+        run: swift build
+
+      - name: 패리티 — Swift 포트가 레퍼런스와 같은 체인 해시를 내는가
+        working-directory: agent-macos
+        run: swift run owlwatch-specrunner ../spec
+
+  console:
+    name: 콘솔 빌드
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: npm
+          cache-dependency-path: console/package-lock.json
+
+      - name: 설치
+        working-directory: console
+        run: npm ci
+
+      - name: 빌드 · 타입 체크
+        working-directory: console
+        run: npm run build

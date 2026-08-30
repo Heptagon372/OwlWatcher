@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>OwlWatch.Core</RootNamespace>
+    <Description>관측·이벤트·정책 모델과 정규화 JSON/해시체인. 플랫폼 중립.</Description>
+  </PropertyGroup>
+</Project>

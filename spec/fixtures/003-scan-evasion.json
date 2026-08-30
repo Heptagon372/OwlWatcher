@@ -1,0 +1,198 @@
+{
+  "name": "003-scan-evasion",
+  "why": "v0.2의 핵심 회귀. 시뮬레이터 (g): 사전점검 직전 종료 → 시험 중 재실행 → 사용자 공간 목록에서 숨기. 커널 원장이 재실행을 기록하므로 회피가 성립하지 않아야 한다.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "kernel",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "scanned": [
+        "process"
+      ],
+      "observations": [
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 900,
+          "path": "C:/Windows/explorer.exe",
+          "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+          "signer": "Microsoft Windows",
+          "signed": true,
+          "platformBinary": true,
+          "hasVisibleWindow": true,
+          "startedAt": "2026-10-14T00:10:00Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 901,
+          "path": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:05Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 902,
+          "path": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:07Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 903,
+          "path": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:11:00Z"
+        }
+      ]
+    },
+    {
+      "observations": [
+        {
+          "kind": "exec",
+          "source": "kernel",
+          "signal": "S9",
+          "collector": "etw-kernel-process",
+          "platform": "windows",
+          "ts": "2026-10-14T01:03:00Z",
+          "pid": 4211,
+          "ppid": 900,
+          "path": "~/Downloads/helper.exe",
+          "sha256": "bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd",
+          "signer": null,
+          "signed": false,
+          "platformBinary": false,
+          "startedAt": "2026-10-14T01:03:00Z"
+        }
+      ]
+    },
+    {
+      "scanned": [
+        "process"
+      ],
+      "observations": [
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:04:00Z",
+          "pid": 900,
+          "path": "C:/Windows/explorer.exe",
+          "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+          "signer": "Microsoft Windows",
+          "signed": true,
+          "platformBinary": true,
+          "hasVisibleWindow": true,
+          "startedAt": "2026-10-14T00:10:00Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:04:00Z",
+          "pid": 901,
+          "path": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:05Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:04:00Z",
+          "pid": 902,
+          "path": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:07Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T01:04:00Z",
+          "pid": 903,
+          "path": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:11:00Z"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S9-UNKNOWN-EXEC",
+        "grade": "P0",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd",
+        "contexts": [
+          "downloadsPath",
+          "unsignedBinary",
+          "startedDuringExam"
+        ]
+      },
+      {
+        "rule": "R-CORR-SCAN-EVASION",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:bdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbdbd",
+        "contexts": []
+      }
+    ],
+    "chainHead": "db659f7736a6048f55442b83b9867aead749664dbfae0aa10484afa45e347a25"
+  }
+}

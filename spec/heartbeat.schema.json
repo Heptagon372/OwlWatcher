@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://owlwatch.spec/heartbeat.schema.json",
+  "title": "Heartbeat",
+  "description": "POST /functions/v1/heartbeat 본문. 설계서 08장. 서버는 seq 단조 증가 · 시각 편차 ±30s · 서명 검증 후 브로드캐스트하고, 검증 실패는 S14(P0)로 올린다.",
+  "type": "object",
+  "required": ["sessionId", "seq", "ts", "state", "posture", "summary", "sig"],
+  "properties": {
+    "sessionId": { "type": "string" },
+    "seq": { "type": "integer", "minimum": 1 },
+    "ts": { "type": "string", "format": "date-time" },
+    "state": { "enum": ["idle", "precheck", "ready", "armed", "warn", "crit", "offline", "ended"] },
+    "posture": {
+      "type": "object",
+      "required": ["beacon", "canary", "ifaces", "captureGuard"],
+      "properties": {
+        "beacon": { "type": "boolean" },
+        "canary": { "type": "boolean" },
+        "ifaces": { "type": "integer" },
+        "captureGuard": { "enum": ["ok", "failed", "unsupported", "off"] }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["ledgerExecs", "unknownProcs", "statusItems", "capsPatterns"],
+      "properties": {
+        "ledgerExecs": { "type": "integer" },
+        "unknownProcs": { "type": "integer" },
+        "statusItems": { "type": "integer" },
+        "capsPatterns": { "type": "integer" }
+      }
+    },
+    "events": {
+      "type": "array",
+      "description": "직전 하트비트 이후 생성된 이벤트. 오프라인이었다면 로컬 해시체인에 쌓였다가 순서를 보존해 재전송된다.",
+      "items": { "$ref": "https://owlwatch.spec/event.schema.json" }
+    },
+    "attestation": { "enum": ["hw", "sw"] },
+    "agentVersion": { "type": "string" },
+    "sig": { "type": "string", "description": "base64(ECDSA-P256-SHA256). 서명 대상은 sig 필드를 제외한 본문의 정규화 JSON." }
+  },
+  "additionalProperties": false
+}

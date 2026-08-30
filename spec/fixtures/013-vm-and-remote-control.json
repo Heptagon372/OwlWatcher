@@ -1,0 +1,67 @@
+{
+  "name": "013-vm-and-remote-control",
+  "why": "VM 응시는 시험 정책 위반(P1), 원격제어 도구는 거부목록이라 허용목록보다 우선한다(P0 crit).",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "observations": [
+        {
+          "kind": "vmIndicator",
+          "source": "userspace",
+          "signal": "S6",
+          "collector": "cpuid",
+          "ts": "2026-10-14T01:01:00Z",
+          "hypervisorPresent": true,
+          "vendor": "VMwareVMware",
+          "manufacturer": "VMware, Inc.",
+          "platform": "windows"
+        },
+        {
+          "kind": "remoteControlProcess",
+          "source": "userspace",
+          "signal": "S6",
+          "collector": "toolhelp32",
+          "ts": "2026-10-14T01:01:05Z",
+          "pid": 8100,
+          "path": "C:/Program Files/AnyDesk/AnyDesk.exe",
+          "sha256": "f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+          "signer": "AnyDesk Software GmbH",
+          "signed": true,
+          "matched": "remote-anydesk",
+          "platform": "windows"
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S6-VM",
+        "grade": "P1",
+        "severity": "warn",
+        "subjectKey": "session:exam-2026-mid-cs101:vm",
+        "contexts": []
+      },
+      {
+        "rule": "R-DENY-PROCESS",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1f1",
+        "contexts": []
+      }
+    ],
+    "chainHead": "532776ec87293f80b2b4a55ba3bebae84a7c9529193a26e3c2e89270d69644b6"
+  }
+}

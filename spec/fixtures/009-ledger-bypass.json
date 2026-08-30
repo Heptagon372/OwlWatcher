@@ -1,0 +1,182 @@
+{
+  "name": "009-ledger-bypass",
+  "why": "설계서 05장 \"원장 상관\": 화면에는 항목이 있는데 커널 원장에 실행 기록이 없다 = 원장 우회 시도. S2와 겹쳐 crit로 올라간다.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "kernel",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "scanned": [
+        "process"
+      ],
+      "observations": [
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 900,
+          "path": "C:/Windows/explorer.exe",
+          "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+          "signer": "Microsoft Windows",
+          "signed": true,
+          "platformBinary": true,
+          "hasVisibleWindow": true,
+          "startedAt": "2026-10-14T00:10:00Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 901,
+          "path": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:05Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 902,
+          "path": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:07Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:57:00Z",
+          "pid": 903,
+          "path": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:11:00Z"
+        }
+      ]
+    },
+    {
+      "scanned": [
+        "statusItem"
+      ],
+      "observations": [
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:08:00Z",
+          "ownerPid": 901,
+          "ownerPath": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "promoted": true
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:08:00Z",
+          "ownerPid": 902,
+          "ownerPath": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "promoted": false
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:08:00Z",
+          "ownerPid": 903,
+          "ownerPath": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "promoted": true
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:08:00Z",
+          "ownerPid": 7777,
+          "ownerPath": "~/AppData/Roaming/ghost/ghost.exe",
+          "sha256": "e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1",
+          "signer": null,
+          "signed": false,
+          "promoted": true
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S2-UNKNOWN-STATUS-ITEM",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1",
+        "contexts": [
+          "unsignedBinary"
+        ]
+      },
+      {
+        "rule": "R-CORR-LEDGER-BYPASS",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1",
+        "contexts": []
+      },
+      {
+        "rule": "R-P1-ESCALATION",
+        "grade": "P1",
+        "severity": "crit",
+        "subjectKey": "proc:sha256:e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1e1",
+        "contexts": []
+      }
+    ],
+    "chainHead": "d8571b944955f37b0af0563a4abf908bfb2a4badd8e9c00e5f9f2708d8bf627c"
+  }
+}

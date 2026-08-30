@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <RootNamespace>OwlWatch.SpecRunner</RootNamespace>
+    <AssemblyName>owlwatch-specrunner</AssemblyName>
+    <Description>패리티 테스트. spec/fixtures 를 C# 엔진으로 돌려 레퍼런스 기대값과 대조한다.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../src/OwlWatch.Rules/OwlWatch.Rules.csproj" />
+    <ProjectReference Include="../../src/OwlWatch.Collectors/OwlWatch.Collectors.csproj" />
+  </ItemGroup>
+</Project>

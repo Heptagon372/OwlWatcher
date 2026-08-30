@@ -1,0 +1,31 @@
+{
+  "$설명": "L1 에이전트 세션 설정 예시. 실제 배포에서는 콘솔이 세션을 만들 때 내려준다.",
+
+  "sessionId": "cs101-mid-seat17",
+  "examId": "",
+  "$examId설명": "콘솔의 exams.id (UUID). 콘솔 없이 쓰면 비워 둔다.",
+  "seat": 17,
+  "examTitle": "자료구조 중간고사",
+  "examStartsAt": "2026-10-14T01:00:00Z",
+  "examEndsAt": "2026-10-14T02:30:00Z",
+  "tzOffsetMinutes": 540,
+  "level": "L1",
+  "$level설명": "L0 점검만 · L1 캡처차단+자가검증 · L2 Take a Test 락다운(examUrl 필요, 승인 불필요)",
+  "examUrl": "https://lms.example.ac.kr/exam/cs101-mid",
+
+  "console": {
+    "$설명": "baseUrl 이 없으면 콘솔 없이 로컬 기록만 남긴다. sessionCode 는 감독관 대조용 비밀이다.",
+    "baseUrl": "http://127.0.0.1:8787",
+    "sessionCode": "OWL-DEMO-2026"
+  },
+
+  "network": {
+    "$설명": "beacon 은 시험 VLAN 에서만 닿아야 하고, canary 는 게이트웨이가 차단해야 한다. canary 에 닿으면 핫스팟이다.",
+    "beaconUrl": "http://127.0.0.1:8787/b",
+    "canaryUrl": "http://127.0.0.1:8787/canary",
+    "expectedSalt": "owlwatch-dev-salt"
+  },
+
+  "policy": ["school-common"],
+  "retentionDays": 30
+}

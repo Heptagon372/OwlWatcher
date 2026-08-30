@@ -1,0 +1,46 @@
+{
+  "name": "004-s13-capture-guard-fail",
+  "why": "누군가 시험 창의 캡처 제외 플래그를 되돌렸다. 자가검증 실패는 우리 코드가 확인한 사실이므로 P0. 설계서 06장 \"설정했다가 아니라 지금도 유효하다를 증명한다\".",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "kernel",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "observations": [
+        {
+          "kind": "captureGuard",
+          "source": "selfverify",
+          "signal": "S13",
+          "collector": "wda-selfcheck",
+          "platform": "windows",
+          "ts": "2026-10-14T01:10:00Z",
+          "windowAffinityOk": false,
+          "selfCaptureBlank": false,
+          "ok": false
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S13-CAPTURE-GUARD-FAIL",
+        "grade": "P0",
+        "severity": "crit",
+        "subjectKey": "guard:capture",
+        "contexts": []
+      }
+    ],
+    "chainHead": "1936b0705ce90b03f5941c7ba9bd3af189a9b40879d541bbe7d9c94ade184bc3"
+  }
+}

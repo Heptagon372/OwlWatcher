@@ -1,0 +1,16 @@
+{
+  "name": "@owlwatch/core-rules",
+  "version": "0.2.0",
+  "description": "OwlWatch 탐지 규칙·등급 판정 레퍼런스 구현. 에이전트 포트의 패리티 기준.",
+  "type": "module",
+  "main": "index.js",
+  "private": true,
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/*.test.js",
+    "fixtures": "node bin/run-fixtures.js",
+    "bless": "node bin/run-fixtures.js --bless"
+  }
+}

@@ -1,0 +1,108 @@
+{
+  "name": "012-debounce",
+  "why": "같은 규칙·같은 대상은 5분에 한 번. 01:00 발화 → 01:02 억제 → 01:06 재발화.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "scanned": [
+        "statusItem"
+      ],
+      "observations": [
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:00:00Z",
+          "ownerPid": 5000,
+          "ownerPath": "~/AppData/Local/hlp/tray.exe",
+          "sha256": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+          "signer": null,
+          "signed": false,
+          "promoted": true
+        }
+      ]
+    },
+    {
+      "scanned": [
+        "statusItem"
+      ],
+      "observations": [
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:02:00Z",
+          "ownerPid": 5000,
+          "ownerPath": "~/AppData/Local/hlp/tray.exe",
+          "sha256": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+          "signer": null,
+          "signed": false,
+          "promoted": true
+        }
+      ]
+    },
+    {
+      "scanned": [
+        "statusItem"
+      ],
+      "observations": [
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:06:00Z",
+          "ownerPid": 5000,
+          "ownerPath": "~/AppData/Local/hlp/tray.exe",
+          "sha256": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+          "signer": null,
+          "signed": false,
+          "promoted": true
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S2-UNKNOWN-STATUS-ITEM",
+        "grade": "P1",
+        "severity": "warn",
+        "subjectKey": "proc:sha256:c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+        "contexts": [
+          "unsignedBinary"
+        ]
+      },
+      {
+        "rule": "R-S2-UNKNOWN-STATUS-ITEM",
+        "grade": "P1",
+        "severity": "warn",
+        "subjectKey": "proc:sha256:c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+        "contexts": [
+          "unsignedBinary"
+        ]
+      }
+    ],
+    "chainHead": "613932b487ce09ce39b3bc54fc07f8e1b2769c4440d00bc14a5c17cc89728bee"
+  }
+}

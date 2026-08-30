@@ -1,0 +1,177 @@
+{
+  "name": "001-clean-session",
+  "why": "정상 좌석. 허용목록 안의 상주 앱만 돌고 보호도 정상이면 이벤트가 하나도 나오면 안 된다. 설계서 12장 목표: P0 오탐 0건.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "kernel",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "scanned": [
+        "process",
+        "statusItem"
+      ],
+      "observations": [
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:00Z",
+          "pid": 900,
+          "path": "C:/Windows/explorer.exe",
+          "sha256": "a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1a1",
+          "signer": "Microsoft Windows",
+          "signed": true,
+          "platformBinary": true,
+          "hasVisibleWindow": true,
+          "startedAt": "2026-10-14T00:10:00Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:00Z",
+          "pid": 901,
+          "path": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:05Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:00Z",
+          "pid": 902,
+          "path": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:10:07Z"
+        },
+        {
+          "kind": "process",
+          "source": "userspace",
+          "signal": "S1",
+          "collector": "toolhelp32",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:00Z",
+          "pid": 903,
+          "path": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "hasVisibleWindow": false,
+          "startedAt": "2026-10-14T00:11:00Z"
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:00Z",
+          "ownerPid": 901,
+          "ownerPath": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "promoted": true
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:00Z",
+          "ownerPid": 902,
+          "ownerPath": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "promoted": false
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:00Z",
+          "ownerPid": 903,
+          "ownerPath": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "promoted": true
+        },
+        {
+          "kind": "netPosture",
+          "source": "userspace",
+          "signal": "S5",
+          "collector": "beacon-canary",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:10Z",
+          "beacon": true,
+          "canary": false,
+          "ifaceCount": 1,
+          "ifaces": [
+            {
+              "name": "Wi-Fi",
+              "type": "wifi",
+              "up": true
+            }
+          ]
+        },
+        {
+          "kind": "captureGuard",
+          "source": "selfverify",
+          "signal": "S13",
+          "collector": "wda-selfcheck",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:20Z",
+          "windowAffinityOk": true,
+          "selfCaptureBlank": true,
+          "ok": true
+        },
+        {
+          "kind": "attestation",
+          "source": "selfverify",
+          "signal": "S14",
+          "collector": "tpm-cng",
+          "platform": "windows",
+          "ts": "2026-10-14T00:59:25Z",
+          "attestationKind": "hw",
+          "provider": "Microsoft Platform Crypto Provider",
+          "verified": true
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [],
+    "chainHead": "0000000000000000000000000000000000000000000000000000000000000000"
+  }
+}

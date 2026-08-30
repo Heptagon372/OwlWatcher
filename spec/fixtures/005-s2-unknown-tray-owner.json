@@ -1,0 +1,100 @@
+{
+  "name": "005-s2-unknown-tray-owner",
+  "why": "메뉴바/트레이 항목의 소유 프로세스가 허용목록 밖. 단독으로는 P1 warn — 감독관이 한 번 가서 확인하면 끝나는 등급이다.",
+  "session": {
+    "sessionId": "exam-2026-mid-cs101",
+    "seat": 17,
+    "platform": "windows",
+    "ledger": "fallback",
+    "examStartsAt": "2026-10-14T01:00:00Z",
+    "examEndsAt": "2026-10-14T02:30:00Z",
+    "tzOffsetMinutes": 540,
+    "agentPid": 1000
+  },
+  "policyRefs": [
+    "school-common"
+  ],
+  "steps": [
+    {
+      "scanned": [
+        "statusItem"
+      ],
+      "observations": [
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:05:00Z",
+          "ownerPid": 901,
+          "ownerPath": "~/AppData/Local/Microsoft/OneDrive/OneDrive.exe",
+          "sha256": "a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2a2",
+          "signer": "Microsoft Corporation",
+          "signed": true,
+          "promoted": true
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:05:00Z",
+          "ownerPid": 902,
+          "ownerPath": "C:/Program Files/Dropbox/Client/Dropbox.exe",
+          "sha256": "a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3a3",
+          "signer": "Dropbox, Inc",
+          "signed": true,
+          "promoted": false
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:05:00Z",
+          "ownerPid": 903,
+          "ownerPath": "C:/Program Files (x86)/Kakao/KakaoTalk/KakaoTalk.exe",
+          "sha256": "a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4a4",
+          "signer": "Kakao Corp",
+          "signed": true,
+          "promoted": true
+        },
+        {
+          "kind": "statusItem",
+          "source": "userspace",
+          "signal": "S2",
+          "collector": "notifyicon-registry",
+          "method": "registry",
+          "platform": "windows",
+          "ts": "2026-10-14T01:05:00Z",
+          "ownerPid": 5000,
+          "ownerPath": "~/AppData/Local/hlp/tray.exe",
+          "sha256": "c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+          "signer": null,
+          "signed": false,
+          "promoted": true
+        }
+      ]
+    }
+  ],
+  "expect": {
+    "events": [
+      {
+        "rule": "R-S2-UNKNOWN-STATUS-ITEM",
+        "grade": "P1",
+        "severity": "warn",
+        "subjectKey": "proc:sha256:c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1c1",
+        "contexts": [
+          "unsignedBinary"
+        ]
+      }
+    ],
+    "chainHead": "9c2b321cbe1c2701f0add17ee6addaaf38b4a23fe41e7628c7e5c2ff0e46676d"
+  }
+}

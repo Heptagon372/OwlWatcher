@@ -1,0 +1,33 @@
+# 빌드 산출물
+bin/
+obj/
+*.user
+node_modules/
+.next/
+next-env.d.ts
+*.tsbuildinfo
+
+# 콘솔 환경변수 — Supabase 키가 들어간다
+.env
+.env.local
+
+# 로컬 실행 결과 — 이벤트 로그는 학생 기기에만 남고 보관 기간 뒤 지워진다.
+# 저장소에 들어오면 안 되는 것들이다.
+*.jsonl
+audit.log
+core-rules/fixture-report.json
+mock-server/*.log
+
+# 시뮬레이터가 Downloads 에 떨구는 사본 (스스로 지우지만 혹시 남을 때)
+owlwatch-sim-helper.exe
+
+# 세션 설정에는 감독관 세션 비밀이 들어간다. 예시 파일만 커밋한다.
+owlwatch.config.json
+
+# 서명 키·인증서
+*.pfx
+*.snk
+*.softkey
+
+.DS_Store
+Thumbs.db
