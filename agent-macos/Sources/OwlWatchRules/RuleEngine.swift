@@ -412,7 +412,7 @@ public enum RuleEngine {
 
         let d = Draft()
         d.rule = "R-S12-HID-OPEN"; d.grade = "P0"; d.signals = ["S12"]; d.obs = o
-        let label = o.str("path") ?? "pid \(o.int("pid").map(String.init) ?? "")"
+        let label = o.str("path") ?? "pid \(o.int("pid").map { String($0) } ?? "")"
         d.subject = subj("device", procKey(o), label, o.int("pid"), withPid: true)
         d.detail = Summaries.hid(o)
         push(ctx, d)
@@ -559,7 +559,7 @@ public enum RuleEngine {
     static func ruleImageLoad(_ ctx: Ctx, _ o: JSON) {
         let mods = ctx.policy.captureStackModules.map { $0.lowercased() }
         let modulePath = o.str("modulePath") ?? ""
-        let mod = modulePath.split(whereSeparator: { $0 == "/" || $0 == "\\" }).last.map(String.init)?.lowercased() ?? ""
+        let mod = modulePath.split(whereSeparator: { $0 == "/" || $0 == "\\" }).last.map { String($0) }?.lowercased() ?? ""
         guard mods.contains(mod) else { return }
 
         let key = procKey(o)

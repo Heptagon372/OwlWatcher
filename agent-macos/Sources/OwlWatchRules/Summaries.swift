@@ -104,7 +104,7 @@ public enum Summaries {
     public static func beaconMiss() -> String { "시험망 비콘에 도달하지 못함 — 네트워크 확인 필요(조치 아님)" }
     public static func tcc(_ o: JSON) -> String { "화면 기록 권한이 허용됨 — 대상 \(o.str("identity") ?? "")" }
     public static func hid(_ o: JSON) -> String {
-        let who = o.str("path") ?? "pid \(o.int("pid").map(String.init) ?? "")"
+        let who = o.str("path") ?? "pid \(o.int("pid").map { String($0) } ?? "")"
         return "키보드 HID 장치를 연 프로세스 — \(who) (\(o.str("userClientClass") ?? ""))"
     }
     public static func guardFail(_ o: JSON) -> String {

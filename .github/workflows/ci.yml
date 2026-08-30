@@ -104,11 +104,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      # 수집기(ESF·AAC)는 엔타이틀먼트와 Xcode 프로젝트가 필요해 여기서 빌드하지 않는다.
-      # 규칙 엔진과 정규화 JSON 은 순수 Swift 라 승인 없이도 검증된다.
+      # 수집기(OwlWatchCollectors)는 여기서 짓지 않는다. ESF 의 TCC_MODIFY 는 macOS 15.4
+      # SDK 심볼이라 이 러너에서 컴파일되지 않고, 그건 엔타이틀먼트와 Xcode 프로젝트가
+      # 필요한 별개 문제다. CI 가 확인하려는 것은 규칙 엔진 패리티뿐이므로
+      # --product 로 그 그래프(Core + Rules)만 짓는다.
       - name: 빌드 (Core · Rules)
         working-directory: agent-macos
-        run: swift build
+        run: swift build --product owlwatch-specrunner
 
       - name: 패리티 — Swift 포트가 레퍼런스와 같은 체인 해시를 내는가
         working-directory: agent-macos

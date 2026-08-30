@@ -26,7 +26,7 @@ let package = Package(
         .target(
             name: "OwlWatchCollectors",
             dependencies: ["OwlWatchCore"],
-            linkerSettings: [.linkedLibrary("EndpointSecurity")]
+            linkerSettings: [.linkedFramework("EndpointSecurity")]
         ),
 
         .executableTarget(name: "owlwatch-specrunner", dependencies: ["OwlWatchRules"]),
