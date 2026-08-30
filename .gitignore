@@ -1,6 +1,11 @@
 # 빌드 산출물
+#
+# bin/ 은 .NET 출력용인데, 그대로 두면 core-rules/bin/run-fixtures.js 까지 삼킨다.
+# 실제로 첫 푸시에서 그 파일이 빠져 CI 의 규칙 엔진 테스트가 깨졌다 —
+# 로컬에는 파일이 있어서 아무도 눈치채지 못하는 종류의 실수다.
 bin/
 obj/
+!core-rules/bin/
 *.user
 node_modules/
 .next/
