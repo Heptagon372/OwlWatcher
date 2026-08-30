@@ -13,7 +13,15 @@ namespace OwlWatch.SpecRunner;
 /// </summary>
 public static class EtwCheck
 {
-    public static int Run()
+    /// <param name="requireSession">
+    /// true 면 실시간 세션을 열지 못하는 것을 실패로 친다.
+    ///
+    /// 기본값이 false 인 이유: 개발 기기에는 권한이 없는 게 정상이고, 그걸 실패로 두면
+    /// 아무도 이 검사를 돌리지 않게 된다. 그러나 관리자 권한이 있는 환경(CI 러너)에서는
+    /// 반드시 켜야 한다 — 켜지 않으면 초록불이 "세션이 열렸다"를 증명하지 못하고,
+    /// 그건 이 프로젝트가 경계하는 바로 그 종류의 착각이다.
+    /// </param>
+    public static int Run(bool requireSession = false)
     {
         Console.WriteLine("ETW 커널 원장 자가 진단 (S9 · S11)\n");
         var failed = 0;
@@ -65,12 +73,21 @@ public static class EtwCheck
             Console.WriteLine($"   ✓ {session.Message}");
             Console.WriteLine("     → 에이전트가 ledger=kernel 로 동작하고 S9 이 P0 등급을 만든다.");
         }
+        else if (requireSession)
+        {
+            failed++;
+            Console.Error.WriteLine($"   ✗ 열지 못했다 (Win32 {session.Win32Error})");
+            Console.Error.WriteLine($"     {session.Message}");
+            Console.Error.WriteLine("     --require-session 이 켜져 있다. 관리자 권한이 있는 환경에서 세션이");
+            Console.Error.WriteLine("     열리지 않는다면 그건 권한 문제가 아니라 구현 문제다.");
+        }
         else
         {
             Console.WriteLine($"   · 열지 못했다 (Win32 {session.Win32Error})");
             Console.WriteLine($"     {session.Message}");
             Console.WriteLine("     → 에이전트는 LedgerPoller 로 폴백하고, 관측의 source 가 userspace 가 되어");
             Console.WriteLine("       S9 의 등급이 P0 에서 P1 로 자동으로 내려간다. 감추지 않는다.");
+            Console.WriteLine("     (이 결과를 실패로 치려면 --require-session)");
         }
 
         Console.WriteLine();

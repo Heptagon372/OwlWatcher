@@ -27,7 +27,7 @@ public static class Program
             return 0;
         }
 
-        if (args.Contains("--etw")) return EtwCheck.Run();
+        if (args.Contains("--etw")) return EtwCheck.Run(args.Contains("--require-session"));
 
         if (args.Contains("--heartbeat"))
         {
@@ -43,7 +43,7 @@ public static class Program
             return 2;
         }
 
-        if (args.Contains("--ledger")) return LedgerCheck.Run(specDir);
+        if (args.Contains("--ledger")) return LedgerCheck.Run(specDir, args.Contains("--require-kernel"));
 
         var fixDir = Path.Combine(specDir, "fixtures");
         var files = Directory.GetFiles(fixDir, "*.json").OrderBy(f => f, StringComparer.Ordinal).ToList();

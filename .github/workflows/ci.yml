@@ -49,11 +49,15 @@ jobs:
         run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build
 
       # 개발 기기에서는 권한이 없어 여기까지 못 갔다. 러너는 관리자라 실제 세션이 열린다.
-      - name: 커널 원장 (ETW) — 레이아웃 · TDH · 실시간 세션
-        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build -- --etw
+      #
+      # --require-session / --require-kernel 이 없으면 이 두 스텝은 폴백 경로에서도 통과하고,
+      # 그러면 초록불이 "커널 원장이 동작한다"를 증명하지 못한다. 증명되지 않는 초록불은
+      # 이 프로젝트가 경계하는 바로 그것이라 여기서는 엄격 모드로 돌린다.
+      - name: 커널 원장 (ETW) — 실시간 세션이 실제로 열리는가
+        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build -- --etw --require-session
 
-      - name: 원장 전 구간 — 등급이 출처를 따라가는가
-        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build -- --ledger
+      - name: 원장 전 구간 — 커널 원장이 P0 를 만드는가
+        run: dotnet run --project agent-windows/tests/OwlWatch.SpecRunner --no-build -- --ledger --require-kernel
 
       # 캡처 차단은 세션 0(헤드리스)에서 합성기가 없어 검증이 성립하지 않는다.
       # unsupported 를 내는 것이 정상이고, 그 판단 자체가 코드에 있다.

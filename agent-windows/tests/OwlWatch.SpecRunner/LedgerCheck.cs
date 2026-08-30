@@ -19,7 +19,11 @@ namespace OwlWatch.SpecRunner;
 /// </summary>
 public static class LedgerCheck
 {
-    public static int Run(string specDir)
+    /// <param name="requireKernel">
+    /// true 면 커널 원장을 쓰지 못하는 것을 실패로 친다. 관리자 권한 환경에서만 켠다 —
+    /// 켜지 않으면 이 검사는 폴백 경로에서도 통과하므로 "커널이 P0 를 만든다"를 증명하지 못한다.
+    /// </param>
+    public static int Run(string specDir, bool requireKernel = false)
     {
         Console.WriteLine("원장 전 구간 검사 (S9)\n");
 
@@ -39,10 +43,17 @@ public static class LedgerCheck
         {
             Console.WriteLine("   커널 세션이 열렸다. exec 은 P0 근거가 된다.");
         }
+        else if (requireKernel)
+        {
+            Console.Error.WriteLine($"   ✗ 커널 세션 실패 — {etw.FailureReason}");
+            Console.Error.WriteLine("     --require-kernel 이 켜져 있다. 이 환경에서는 커널 원장이 떠야 한다.");
+            return 1;
+        }
         else
         {
             Console.WriteLine($"   커널 세션 실패 — {etw.FailureReason}");
             Console.WriteLine("   폴링으로 내려간다. exec 의 등급이 P1 로 내려가야 한다.");
+            Console.WriteLine("   (커널을 요구하려면 --require-kernel)");
             poller.Prime(ProcessCollector.Snapshot());
             poller.Start();
         }
