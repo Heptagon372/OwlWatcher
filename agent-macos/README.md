@@ -1,15 +1,19 @@
 # agent-macos (M4)
 
-> **이 코드는 한 번도 컴파일되지 않았다.** Windows 개발 기기에서 작성했고 Swift 툴체인이
-> 없었다. Mac 에서 아래 한 줄이 14/14 를 낼 때까지는 동작한다고 말할 수 없다.
+> **규칙 엔진은 검증됐고, 수집기는 아직 한 번도 컴파일되지 않았다.**
+>
+> 이 코드는 Swift 툴체인이 없는 Windows 기기에서 작성했다. CI 의 macOS 러너가 처음으로
+> 컴파일했고, `OwlWatchCore` 와 `OwlWatchRules` 는 통과해 픽스처 14/14 를 냈다 —
+> JS 레퍼런스·Windows 포트와 **체인 해시까지** 같다. 그게 이 저장소가 세 구현을
+> 묶는 방식이다(설계서 G3 · 12장).
 >
 > ```bash
-> swift run owlwatch-specrunner
+> swift run owlwatch-specrunner ../spec
 > ```
 >
-> 그 명령이 통과하면 규칙 엔진이 JS 레퍼런스·Windows 포트와 **체인 해시까지** 같다는 뜻이고,
-> 통과하지 못하면 어디가 다른지 픽스처 단위로 알려 준다. 그게 이 저장소가
-> 세 구현을 묶는 방식이다(설계서 G3 · 12장).
+> `OwlWatchCollectors` 는 다르다. `ES_EVENT_TYPE_NOTIFY_TCC_MODIFY` 가 macOS 15.4 SDK
+> 심볼이라 CI 러너(macos-14)에서 짓지 않고, 엔타이틀먼트와 Xcode 프로젝트가 선결이다.
+> **수집기 코드는 여전히 한 줄도 컴파일된 적이 없다.**
 
 ---
 
@@ -87,12 +91,12 @@ NOTIFY_TCC_MODIFY (15.4+)     S10
 
 ```bash
 cd agent-macos
-swift build                      # Core · Rules 만 빌드된다
-swift run owlwatch-specrunner    # 14/14 가 나와야 한다
+swift build --product owlwatch-specrunner   # Core · Rules 만 짓는다
+swift run owlwatch-specrunner ../spec       # 14/14 가 나와야 한다
 ```
 
-실패하면 그건 이 포트의 버그다 — 픽스처가 어디서 갈렸는지 알려 준다.
-성공하면 그다음이 Xcode 프로젝트와 엔타이틀먼트다.
+`swift build` 를 그냥 돌리면 수집기까지 지으려 하다 SDK 심볼에서 막힌다.
+그다음이 Xcode 프로젝트와 엔타이틀먼트다.
 
 ## 알려진 미확인 항목
 

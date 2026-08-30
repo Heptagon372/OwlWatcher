@@ -2,7 +2,8 @@
 
 Icon Cheater류 "화면 캡처 → AI → 위장 출력" 커닝 도구에 대응하는 시험 무결성 프로그램.
 설계는 [docs/design-v0.2.md](docs/design-v0.2.md) 에 있고, 이 저장소가 그 구현이다.
-Windows 쪽은 실기기에서 검증했고, macOS 쪽은 Apple 승인을 기다리며 코드만 준비돼 있다.
+
+[![CI](https://github.com/Heptagon372/OwlWatcher/actions/workflows/ci.yml/badge.svg)](https://github.com/Heptagon372/OwlWatcher/actions/workflows/ci.yml)
 
 > **이 도구는 부정행위를 판정하지 않는다.** 확인 요청을 만들고 증거를 보관할 뿐이고,
 > 처분은 사람과 위원회가 한다. 휴대폰·2차 기기·AI 안경은 범위 밖이다.
@@ -19,7 +20,7 @@ Windows 쪽은 실기기에서 검증했고, macOS 쪽은 Apple 승인을 기다
 | [`console/`](console) — Next.js 15 + Supabase (M2) | 빌드·타입체크 통과. 실 프로젝트 연결은 미검증 |
 | [`mock-server/`](mock-server) — 하트비트·비콘·카나리·좌석 맵 | TPM 서명 검증 동작 |
 | [`sim/`](sim) — `owlwatch-sim`, 설계서 12장 (a)~(g) | 정답 기능 없음 · 탐지까지 확인 |
-| [`agent-macos/`](agent-macos) — ESF · AAC · 규칙 엔진 Swift 포트 (M4) | **한 번도 컴파일되지 않았다.** Apple 승인 대기 |
+| [`agent-macos/`](agent-macos) — ESF · AAC · 규칙 엔진 Swift 포트 (M4) | 규칙 엔진은 CI 에서 14/14 · 수집기는 Apple 승인 대기 |
 
 신호별 구현 상태는 [`spec/signals.json`](spec/signals.json) 의 `status` 가 단일 출처다.
 실기기에서 확인한 한계는 [docs/limits.md](docs/limits.md).
@@ -29,7 +30,7 @@ Windows 쪽은 실기기에서 검증했고, macOS 쪽은 Apple 승인을 기다
 | | Windows | macOS |
 |---|---|---|
 | **캡처 차단 (S13)** | **동작 확인** — `WDA_EXCLUDEFROMCAPTURE` + 센티넬 자가검증 (대조군 100% → 차단 후 0.0%) | 창 단위 차단이 존재하지 않는다. AAC 로 대체 |
-| **커널 원장 (S9)** | ETW 구현됨. 권한 있으면 **P0**, 없으면 폴링 폴백 **P1** (강등이 자동) | ESF 구현됨(미컴파일). 승인 대기 |
+| **커널 원장 (S9)** | **CI 에서 동작 확인** — 관리자 권한이면 세션이 열리고 exec 이 P0/crit 으로 나온다. 권한이 없으면 폴링 폴백 **P1** (강등이 자동) | ESF 구현됨(미컴파일). 승인 대기 |
 | **락다운 (L2)** | Take a Test — **승인 불필요, 이 기기에서 가용 확인** | AAC — 승인 대기 |
 | **기기 키 (S14)** | TPM CNG **동작 확인** | 미구현 |
 
@@ -165,8 +166,13 @@ S5 카나리 도달은 P1 이지만 crit 이고, 비콘 실패는 P2 이면서 i
 **같은 입력에서 같은 체인 해시가 나오는지 기계가 확인하는 것.**
 
 ```
-core-rules/ (JS, 레퍼런스)  ──bless──▶  spec/fixtures/*.json  ◀──verify──  OwlWatch.Rules (C# 포트)
+                                            ┌──verify──  OwlWatch.Rules   (C#)
+core-rules/ (JS, 레퍼런스) ──bless──▶ spec/fixtures/*.json
+                                            └──verify──  OwlWatchRules    (Swift)
 ```
+
+**세 구현이 같은 픽스처에서 같은 체인 해시를 낸다** — CI 가 매 푸시마다 확인한다.
+해시가 맞는다는 건 알림 문구 한 글자까지 같다는 뜻이다.
 
 규칙을 의도적으로 바꿨으면 `cd core-rules && node bin/run-fixtures.js --bless` 로 기대값을 다시 굽는다.
 그러지 않고 해시가 어긋나면 그건 버그다.
@@ -226,16 +232,17 @@ docs/            설계서 사본 · 처리방침 · 한계 · 감독관 지침
 | **M0** Apple 엔타이틀먼트 2건 신청 · Developer ID / EV 코드서명 | **미착수 — 지금 가장 급한 항목.** 승인 대기가 가장 길고, macOS 코드는 이미 그것만 기다린다 |
 | **M1** Windows 캡처 차단 + 자가검증 · ExamCheck | 완료 · 실기기 검증 |
 | **M2** 콘솔 | 스키마·Edge Function·UI 작성 완료. **실 Supabase 프로젝트에서 미검증** |
-| **M3** Windows ETW 원장 | 배관 검증 완료. **관리자 권한 환경에서 실제 이벤트 수신 미검증** |
-| **M4** macOS ESF + Secure Enclave | 코드 작성 완료, **미컴파일**. Secure Enclave 는 미구현 |
+| **M3** Windows ETW 원장 | **완료 · CI 에서 검증** — 관리자 권한 환경에서 세션이 열리고 S9 이 P0 를 만든다 |
+| **M4** macOS ESF + Secure Enclave | 규칙 엔진은 CI 에서 패리티 확인. **수집기는 미컴파일**(엔타이틀먼트·Xcode 선결), Secure Enclave 미구현 |
 | **M5** 파일럿 2건 → 회고 → 허용목록·임계값 조정 | 미착수 |
 | **M6** L2 — Take a Test 연동(작성 완료) · AAC(승인 대기) · 게이트웨이 로그 S15(미착수) | 부분 |
 
 ### 바로 다음에 해야 할 것
 
-1. **Apple 엔타이틀먼트 신청** — 다른 무엇보다 먼저. 코드는 이미 기다리고 있다
-2. **관리자 계정에서 `--etw` 실행** — 커널 원장이 실제로 이벤트를 받는지, 그리고
-   Performance Log Users 만으로 충분한지(설계서 14장 미결 2번)
-3. **Mac 에서 `swift run owlwatch-specrunner`** — Swift 포트가 14/14 를 내는지
-4. **캡처 차단 우회 경로 실측** — PrintScreen · Snipping Tool · OBS 각각으로
+1. **Apple 엔타이틀먼트 신청** — 다른 무엇보다 먼저. 승인 대기가 가장 길고,
+   규칙 엔진은 이미 통과했으므로 남은 것은 수집기와 승인뿐이다
+2. **Performance Log Users 그룹으로 ETW 세션이 열리는지** — 관리자면 된다는 것은
+   CI 가 확인했다. 실전 배포에는 관리자보다 이쪽이 현실적이다(설계서 14장 미결 2번)
+3. **캡처 차단 우회 경로 실측** — PrintScreen · Snipping Tool · OBS 각각으로
    (설계서 14장 미결 4번, [docs/limits.md](docs/limits.md) 1절)
+4. **실 Supabase 프로젝트에 콘솔 연결** — RLS 와 append-only 트리거가 실제로 막는지
